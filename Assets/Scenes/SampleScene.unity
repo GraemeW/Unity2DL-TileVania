@@ -180,7 +180,7 @@ GameObject:
   - component: {fileID: 1491865752}
   - component: {fileID: 1491865753}
   - component: {fileID: 1491865754}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Foreground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3840,14 +3840,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 799119080, guid: b2c4731d74ddfa14a986cc78f157cde5, type: 3}
-      propertyPath: playerSpeed
-      value: 300
-      objectReference: {fileID: 0}
-    - target: {fileID: 799119080, guid: b2c4731d74ddfa14a986cc78f157cde5, type: 3}
-      propertyPath: jumpForce
-      value: 300
-      objectReference: {fileID: 0}
     - target: {fileID: 1892891497700871716, guid: b2c4731d74ddfa14a986cc78f157cde5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3901,16 +3893,6 @@ PrefabInstance:
     - target: {fileID: 1892891497700871716, guid: b2c4731d74ddfa14a986cc78f157cde5,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1892891497700871718, guid: b2c4731d74ddfa14a986cc78f157cde5,
-        type: 3}
-      propertyPath: m_Offset.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1892891497700871718, guid: b2c4731d74ddfa14a986cc78f157cde5,
-        type: 3}
-      propertyPath: m_Offset.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1892891497700871723, guid: b2c4731d74ddfa14a986cc78f157cde5,

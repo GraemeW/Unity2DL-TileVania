@@ -6,23 +6,27 @@ using UnityEngine.EventSystems;
 
 public class Player : MonoBehaviour
 {
+    const string COLLISION_LAYER_GROUND = "Ground";
+
     // Tunables
     [SerializeField] float playerSpeed = 1.0f;
     [SerializeField] float jumpForce = 1.0f;
-    float jumpThresholdSpeed = 0.1f;
 
     // State
-    float horizontal;
-    float vertical;
     bool isJumpPressed = false;
+    bool isAlive = true;
 
     // Cached references
+    float horizontal;
+    float vertical;
     Rigidbody2D playerRigidbody2D = null;
+    Collider2D playerCollider2D = null;
     Animator animator = null;
 
     private void Start()
     {
         playerRigidbody2D = GetComponent<Rigidbody2D>();
+        playerCollider2D = GetComponent<Collider2D>();
         animator = GetComponent<Animator>();
     }
 
@@ -64,8 +68,8 @@ public class Player : MonoBehaviour
         if (!Mathf.Approximately(deltaX, 0f))
         {
             animator.SetBool("isRunning", true);
-            Vector2 updatedVelocity = new Vector2(deltaX, playerRigidbody2D.velocity.y);
-            playerRigidbody2D.velocity = updatedVelocity;
+            Vector2 velocityIncrement = new Vector2(deltaX, 0f);
+            playerRigidbody2D.velocity += velocityIncrement;
         }
         else
         {
@@ -77,8 +81,7 @@ public class Player : MonoBehaviour
     {
         if (isJumpPressed)
         {
-            //if (Mathf.Approximately(playerRigidbody2D.velocity.y,0f)) // -- too sensitive
-            if (playerRigidbody2D.velocity.y < jumpThresholdSpeed)
+            if (playerCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
             {
                 Vector2 jumpVector = new Vector2(0f, jumpForce);
                 playerRigidbody2D.AddForce(jumpVector);
