@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerSpeed: 10
+  playerClimbSpeed: 10
   jumpForce: 300
 --- !u!61 &1892891497700871718
 BoxCollider2D:
@@ -183,7 +184,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 573976623
-  m_SortingLayer: 3
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -4511845988843747138, guid: 70fa3b5d35c537d4ba31c5eb41fe687f,
     type: 3}
