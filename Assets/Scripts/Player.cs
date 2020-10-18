@@ -8,17 +8,29 @@ public class Player : MonoBehaviour
 {
     const string COLLISION_LAYER_GROUND = "Ground";
     const string COLLISION_LAYER_LADDER = "Ladder";
+    const string COLLISION_BASE_NAME = "Feet";
 
     // Tunables
+    [Header("Movement Detail")]
     [SerializeField] float moveSpeed = 1.0f;
+    [SerializeField] float maxVelocity = 1.0f;
+    [SerializeField] float groundHaltFactor = 0.1f;
+    [SerializeField] float directionFlipHaltFactor = 0.1f;
     [SerializeField] float moveSpeedInAir = 1.0f;
+    [Header("Climbing Detail")]
     [SerializeField] float climbSpeed = 1.0f;
     [SerializeField] float climbLateralVelocityThrottle = 0.1f;
     [SerializeField] float climbDownVelocityFloor = -1.0f;
+    [Header("Jumping Detail")]
     [SerializeField] float jumpForce = 1.0f;
+    [Header("Misc")]
+    float maxAnimationSpeed = 3.0f;
+    [SerializeField] float deathExplosionForce = 100f;
 
     // State
     float playerSpeedDefault = 1.0f;
+    float animationSpeedDefault = 1.0f;
+    int lastLookDirection = 1;
     bool isJumpPressed = false;
     bool isClimbing = false;
     bool isAlive = true;
@@ -28,14 +40,17 @@ public class Player : MonoBehaviour
     float vertical;
     Rigidbody2D playerRigidbody2D = null;
     Collider2D playerCollider2D = null;
+    Collider2D playerFootCollider2D = null;
     Animator animator = null;
 
     private void Start()
     {
         playerRigidbody2D = GetComponent<Rigidbody2D>();
         playerCollider2D = GetComponent<Collider2D>();
+        playerFootCollider2D = transform.Find(COLLISION_BASE_NAME).GetComponent<Collider2D>();
         animator = GetComponent<Animator>();
         playerSpeedDefault = moveSpeed;
+        animationSpeedDefault = animator.speed;
     }
 
     private void Update()
@@ -65,10 +80,15 @@ public class Player : MonoBehaviour
         {
             moveSpeed = playerSpeedDefault;
         }
+
+        // Clamping to speed limits
+        Vector2 cappedVelocity = new Vector2(Mathf.Clamp(playerRigidbody2D.velocity.x, -maxVelocity, maxVelocity), Mathf.Clamp(playerRigidbody2D.velocity.y, -maxVelocity, maxVelocity));
+        playerRigidbody2D.velocity = cappedVelocity;
     }
 
     private void FixedUpdate()
     {
+        if (!isAlive) { return; }
         FlipPlayerLeftRight();
         Move();
         Jump();
@@ -80,7 +100,7 @@ public class Player : MonoBehaviour
         bool playerStationary = Mathf.Approximately(Mathf.Abs(playerRigidbody2D.velocity.x), 0f);
         if (!playerStationary)
         {
-            Vector3 lookVector = new Vector3(Mathf.Sign(playerRigidbody2D.velocity.x) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            Vector3 lookVector = new Vector3(Mathf.Sign(horizontal) * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             transform.localScale = lookVector;
         }
     }
@@ -88,6 +108,8 @@ public class Player : MonoBehaviour
     private void Move()
     {
         float deltaX = horizontal * Time.deltaTime * moveSpeed;
+        VelocityHaltOnDirectionChange(deltaX);
+
         if (!Mathf.Approximately(deltaX, 0f))
         {
             animator.SetBool("isRunning", true);
@@ -97,14 +119,42 @@ public class Player : MonoBehaviour
         else
         {
             animator.SetBool("isRunning", false);
+            SlowPlayerForNoInput();
         }
+        AdjustAnimationSpeed();
+    }
+
+    private void VelocityHaltOnDirectionChange(float deltaX)
+    {
+        int currentLookDirection = (int)Mathf.Sign(deltaX);
+        if (currentLookDirection != lastLookDirection)
+        {
+            Vector2 directionChangeHalt = new Vector2(playerRigidbody2D.velocity.x * directionFlipHaltFactor, playerRigidbody2D.velocity.y);
+            playerRigidbody2D.velocity = directionChangeHalt;
+        }
+        lastLookDirection = currentLookDirection;
+    }
+
+    private void SlowPlayerForNoInput()
+    {
+        if (playerFootCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
+        {
+            Vector2 haltVelocity = new Vector2(playerRigidbody2D.velocity.x * groundHaltFactor, playerRigidbody2D.velocity.y);
+            playerRigidbody2D.velocity = haltVelocity;
+        }
+    }
+
+    private void AdjustAnimationSpeed()
+    {
+        float velocityDependentAnimationSpeed = animationSpeedDefault + (maxAnimationSpeed - animationSpeedDefault) * (Mathf.Abs(playerRigidbody2D.velocity.x) / maxVelocity);
+        animator.speed = velocityDependentAnimationSpeed;
     }
 
     private void Jump()
     {
         if (isJumpPressed)
         {
-            if (playerCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
+            if (playerFootCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
             {
                 Vector2 jumpVector = new Vector2(0f, jumpForce);
                 playerRigidbody2D.AddForce(jumpVector);
@@ -138,13 +188,14 @@ public class Player : MonoBehaviour
     private void ClimbEntry()
     {
         // Initial speed throttling on first collision to ladder (if in the air)
-        if (!isClimbing && !playerCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
+        if (!isClimbing && !playerFootCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
         {
-            playerRigidbody2D.velocity = climbLateralVelocityThrottle * playerRigidbody2D.velocity;
+            Vector2 entryVelocity = new Vector2(climbLateralVelocityThrottle * playerRigidbody2D.velocity.x, 0f);
+            playerRigidbody2D.velocity = entryVelocity;
         }
 
         // Only do climbing animation if not touching ground
-        if (!playerCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
+        if (!playerFootCollider2D.IsTouchingLayers(LayerMask.GetMask(COLLISION_LAYER_GROUND)))
         {
             animator.SetBool("isClimbing", true);
         }
@@ -166,6 +217,26 @@ public class Player : MonoBehaviour
     {
         Vector2 climbDownVelocity = new Vector2(playerRigidbody2D.velocity.x, Mathf.Clamp(playerRigidbody2D.velocity.y + deltaY, climbDownVelocityFloor, 0f));
         playerRigidbody2D.velocity = climbDownVelocity;
+    }
+
+    private void OnCollisionEnter2D(Collision2D otherCollider)
+    {
+        Enemy enemy = otherCollider.gameObject.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            TriggerDeath();
+        }
+    }
+
+    private void TriggerDeath()
+    {
+        if (isAlive)
+        {
+            isAlive = false;
+            animator.SetTrigger("isDead");
+            Vector2 deathExplosionVector = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)) * deathExplosionForce;
+            playerRigidbody2D.AddForce(deathExplosionVector);
+        }
     }
 
 }
