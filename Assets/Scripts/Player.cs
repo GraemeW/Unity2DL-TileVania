@@ -8,6 +8,7 @@ public class Player : MonoBehaviour
 {
     const string COLLISION_LAYER_GROUND = "Ground";
     const string COLLISION_LAYER_LADDER = "Ladder";
+    const string COLLISION_LAYER_HAZARDS = "Hazards";
     const string COLLISION_BASE_NAME = "Feet";
 
     // Tunables
@@ -228,13 +229,21 @@ public class Player : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter2D(Collider2D otherCollider)
+    {
+        if (otherCollider.gameObject.layer == LayerMask.NameToLayer(COLLISION_LAYER_HAZARDS))
+        {
+            TriggerDeath();
+        }
+    }
+
     private void TriggerDeath()
     {
         if (isAlive)
         {
             isAlive = false;
             animator.SetTrigger("isDead");
-            Vector2 deathExplosionVector = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)) * deathExplosionForce;
+            Vector2 deathExplosionVector = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(0.5f, 1.0f)) * deathExplosionForce;
             playerRigidbody2D.AddForce(deathExplosionVector);
         }
     }
