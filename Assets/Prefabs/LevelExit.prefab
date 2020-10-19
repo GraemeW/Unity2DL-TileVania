@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2148125151082821702}
+  - component: {fileID: 2148125151082821705}
   - component: {fileID: 2148125151082821703}
   - component: {fileID: 2148125151082821704}
-  - component: {fileID: 2148125151082821705}
   m_Layer: 14
   m_Name: LevelExit
   m_TagString: Untagged
@@ -33,6 +33,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2148125151082821705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2148125151082821701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e4ba2ce2a24256499bec29fe7305266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  delayBeforeNextLevel: 0.5
+  levelCompleteEffect: {fileID: 3340452080686111555, guid: afdf5e9e256792e47b3d81c6887d1cd3,
+    type: 3}
+  levelCompleteSloMo: 0.4
+  audioClip: {fileID: 8300000, guid: 0338db2db9f375c41917be8e543ba616, type: 3}
 --- !u!212 &2148125151082821703
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -109,18 +126,3 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &2148125151082821705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2148125151082821701}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8e4ba2ce2a24256499bec29fe7305266, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  delayBeforeNextLevel: 1
-  levelCompleteEffect: {fileID: 3340452080686111555, guid: afdf5e9e256792e47b3d81c6887d1cd3,
-    type: 3}

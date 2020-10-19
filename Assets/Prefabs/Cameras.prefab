@@ -110,9 +110,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1620091516}
-  m_LocalRotation: {x: -0.00000017945325, y: -0.0000002440039, z: -4.3787294e-14,
-    w: 1}
-  m_LocalPosition: {x: -0.4371462, y: 2.4172325, z: 19.905416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 43.870003, y: -3.93, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 314422705}
@@ -281,9 +280,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5409181597956677320}
-  m_LocalRotation: {x: -0.00000017945325, y: -0.0000002440039, z: -4.3787294e-14,
-    w: 1}
-  m_LocalPosition: {x: -0.4371462, y: 2.4172325, z: 19.905416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 43.870003, y: -3.93, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5409181597614725221}
@@ -400,9 +398,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8888034533566091004}
-  m_LocalRotation: {x: -0.00000017945325, y: -0.0000002440039, z: -4.3787294e-14,
-    w: 1}
-  m_LocalPosition: {x: 3.3100047, y: 3.5899963, z: -10}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 45.583153, y: -3.9269803, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8888034533556768615}
@@ -516,8 +513,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8888034534078926126}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.747151, y: 1.1727638, z: -29.905416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5409181597956677335}
@@ -584,4 +581,6 @@ MonoBehaviour:
   - m_Hash: -1344928071
     m_ParentHash: 756556552
   - m_Hash: -1231318064
+    m_ParentHash: 756556552
+  - m_Hash: 356025501
     m_ParentHash: 756556552

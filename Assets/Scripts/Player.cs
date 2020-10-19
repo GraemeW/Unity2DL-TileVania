@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -27,6 +27,14 @@ public class Player : MonoBehaviour
     [Header("Misc")]
     float maxAnimationSpeed = 3.0f;
     [SerializeField] float deathExplosionForce = 100f;
+    [SerializeField] float delayBeforeGameOverScreen = 3.0f;
+    [Header("Audio")]
+    [SerializeField] AudioClip audioJump = null;
+    [SerializeField] float audioJumpVolume = 0.4f;
+    [SerializeField] AudioClip audioClimbing = null;
+    [SerializeField] float timeBetweenLadderAudioSFX = 0.5f;
+    [SerializeField] AudioClip audioDeath = null;
+    [SerializeField] float audioDeathVolume = 0.6f;
 
     // State
     float playerSpeedDefault = 1.0f;
@@ -34,6 +42,7 @@ public class Player : MonoBehaviour
     int lastLookDirection = 1;
     bool isJumpPressed = false;
     bool isClimbing = false;
+    bool climbingAudioQueued = false;
     bool isAlive = true;
 
     // Cached references
@@ -43,6 +52,9 @@ public class Player : MonoBehaviour
     Collider2D playerCollider2D = null;
     Collider2D playerFootCollider2D = null;
     Animator animator = null;
+    GameSession gameSession = null;
+    HeadsUpDisplayController headsUpDisplayController = null;
+    AudioSource audioSource = null;
 
     private void Start()
     {
@@ -52,6 +64,9 @@ public class Player : MonoBehaviour
         animator = GetComponent<Animator>();
         playerSpeedDefault = moveSpeed;
         animationSpeedDefault = animator.speed;
+        gameSession = FindObjectOfType<GameSession>();
+        headsUpDisplayController = FindObjectOfType<HeadsUpDisplayController>();
+        audioSource = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -159,6 +174,7 @@ public class Player : MonoBehaviour
             {
                 Vector2 jumpVector = new Vector2(0f, jumpForce);
                 playerRigidbody2D.AddForce(jumpVector);
+                AudioSource.PlayClipAtPoint(audioJump, Camera.main.transform.position, audioJumpVolume);
             }
             isJumpPressed = false;
         }
@@ -206,6 +222,7 @@ public class Player : MonoBehaviour
         }
 
         isClimbing = true;
+        StartCoroutine(PlayLadderClimbSFX());
     }
 
     private void ClimbUp(float deltaY)
@@ -218,6 +235,19 @@ public class Player : MonoBehaviour
     {
         Vector2 climbDownVelocity = new Vector2(playerRigidbody2D.velocity.x, Mathf.Clamp(playerRigidbody2D.velocity.y + deltaY, climbDownVelocityFloor, 0f));
         playerRigidbody2D.velocity = climbDownVelocity;
+    }
+
+    private IEnumerator PlayLadderClimbSFX()
+    {
+        if (!climbingAudioQueued)
+        {
+            climbingAudioQueued = true;
+            audioSource.clip = audioClimbing;
+            audioSource.Play();
+            yield return new WaitForSeconds(timeBetweenLadderAudioSFX);
+            climbingAudioQueued = false;
+        }
+        else { yield break; }
     }
 
     private void OnCollisionEnter2D(Collision2D otherCollider)
@@ -244,7 +274,19 @@ public class Player : MonoBehaviour
             isAlive = false;
             animator.SetTrigger("isDead");
             Vector2 deathExplosionVector = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(0.5f, 1.0f)) * deathExplosionForce;
+            AudioSource.PlayClipAtPoint(audioDeath, Camera.main.transform.position, audioDeathVolume);
             playerRigidbody2D.AddForce(deathExplosionVector);
+            StartCoroutine(TriggerGameOver());
+        }
+    }
+
+    private IEnumerator TriggerGameOver()
+    {
+        yield return new WaitForSeconds(delayBeforeGameOverScreen);
+        gameSession.ProcessPlayerDeath();
+        if (headsUpDisplayController != null)
+        {
+            headsUpDisplayController.UpdateLivesText();
         }
     }
 

@@ -47,21 +47,24 @@ TagManager:
   - name: Ladder
     uniqueID: 1750588595
     locked: 0
-  - name: Enemy
-    uniqueID: 685762591
-    locked: 0
   - name: Interactables
     uniqueID: 350623631
+    locked: 0
+  - name: Enemy
+    uniqueID: 685762591
     locked: 0
   - name: Player
     uniqueID: 573976623
     locked: 0
-  - name: Foreground
-    uniqueID: 4239071911
-    locked: 0
   - name: Hazards
     uniqueID: 2475570321
     locked: 0
+  - name: Foreground
+    uniqueID: 4239071911
+    locked: 0
   - name: VFX
     uniqueID: 399790349
+    locked: 0
+  - name: UI
+    uniqueID: 941295665
     locked: 0
